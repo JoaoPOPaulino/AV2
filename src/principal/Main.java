@@ -224,18 +224,14 @@ public class Main {
                 case 3:
                     System.out.println("Filtrar por tipo de usuário:");
                     System.out.println("1. Administrador");
-                    System.out.println("2. Hóspede");
-                    System.out.println("3. Recepcionista");
+                    System.out.println("2. Recepcionista");
+                    System.out.println("3. Hóspede");
 
                     int tipoUsuario = scan.nextInt();
-                    List<Usuario> usuariosFiltrados = new ArrayList<>();
-                    for (Usuario usuario : usuarios) {
-                        if (usuario.getTipoUsuario() == TipoUsuario.valueOf(String.valueOf(tipoUsuario))) {
-                            usuariosFiltrados.add(usuario);
-                        }
-                    }
-                    usuarios = usuariosFiltrados;
 
+                    usuarios = usuarios.stream()
+                            .filter(usuario -> usuario.getTipoUsuario().ordinal() == tipoUsuario - 1)
+                            .collect(Collectors.toList());
                     break;
                 case 4:
                     break;

@@ -14,4 +14,11 @@ public enum TipoUsuario {
     public int getValor() {
         return valor;
     }
+
+    @Override
+    public String toString() {
+        return "TipoUsuario{" +
+                "valor=" + valor +
+                '}';
+    }
 }
