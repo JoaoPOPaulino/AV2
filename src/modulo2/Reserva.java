@@ -62,4 +62,15 @@ public class Reserva {
         long dias = dataInicio.until(dataFinal).getDays();
         valorTotal = dias * quarto.getDiaria();
     }
+
+    @Override
+    public String toString() {
+        return "Reserva{" +
+                "dataInicio=" + dataInicio +
+                ", dataFinal=" + dataFinal +
+                ", quarto=" + quarto +
+                ", usuario=" + usuario +
+                ", valorTotal=" + valorTotal +
+                '}';
+    }
 }

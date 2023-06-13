@@ -1,9 +1,8 @@
 package principal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import modulo.*;
 import modulo2.*;
@@ -59,7 +58,8 @@ public class Main {
             do {
                 System.out.println("=== Menu Principal ===");
                 System.out.println("1. Login");
-                System.out.println("2. Sair");
+                System.out.println("2. Cadastro");
+                System.out.println("3. Sair");
                 System.out.print("Selecione uma opção: ");
                 opcao = scan.nextInt();
 
@@ -67,7 +67,11 @@ public class Main {
                     case 1:
                         autenticarUsuario(scan);
                         break;
+
                     case 2:
+                        cadastrarUsuario(scan);
+                        break;
+                    case 3:
                         System.out.println("Saindo do sistema...");
                         break;
                     default:
@@ -113,7 +117,7 @@ public class Main {
                 }
             }
 
-            throw new AutenticacaoException("Usuaário não encontrado");
+            throw new AutenticacaoException("Usuário não encontrado");
         }
 
         private static void exibirMenuAdministrador(Scanner scan) {
@@ -194,17 +198,59 @@ public class Main {
             System.out.println("Usuário cadastrado com sucesso.");
         }
 
-        private static void exibirUsuarios() {
-            System.out.println("=== Lista de Usuários ===");
+    private static void exibirUsuarios() {
+        System.out.println("=== Lista de Usuários ===");
 
-            if (usuarios.isEmpty()) {
-                System.out.println("Nenhum usuário cadastrado.");
-            } else {
-                for (Usuario usuario : usuarios) {
-                    System.out.println(usuario);
-                }
+        if (usuarios.isEmpty()) {
+            System.out.println("Nenhum usuário cadastrado.");
+        } else {
+
+            System.out.println("Opções de impressão:");
+            System.out.println("1. Ordenar por nome");
+            System.out.println("2. Ordenar por login");
+            System.out.println("3. Filtrar por tipo de usuário");
+            System.out.println("4. Exibir todos os usuários");
+            System.out.println("5. Sair");
+
+            // Leitura da opção selecionada
+            int opcao = scan.nextInt();
+            switch (opcao) {
+                case 1:
+                    Collections.sort(usuarios, (u1, u2) -> u1.getNome().compareToIgnoreCase(u2.getNome()));
+                    break;
+                case 2:
+                    Collections.sort(usuarios, Comparator.comparing(Usuario::getLogin));
+                    break;
+                case 3:
+                    System.out.println("Filtrar por tipo de usuário:");
+                    System.out.println("1. Administrador");
+                    System.out.println("2. Hóspede");
+                    System.out.println("3. Recepcionista");
+
+                    int tipoUsuario = scan.nextInt();
+                    List<Usuario> usuariosFiltrados = new ArrayList<>();
+                    for (Usuario usuario : usuarios) {
+                        if (usuario.getTipoUsuario() == TipoUsuario.valueOf(String.valueOf(tipoUsuario))) {
+                            usuariosFiltrados.add(usuario);
+                        }
+                    }
+                    usuarios = usuariosFiltrados;
+
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    return;
+                default:
+                    System.out.println("Opção inválida");
+                    break;
+            }
+
+            for (Usuario usuario : usuarios) {
+                System.out.println(usuario);
             }
         }
+    }
 
         private static void editarUsuario(Scanner scanner) {
             System.out.print("Digite o login do usuário que deseja editar: ");
@@ -397,7 +443,7 @@ public class Main {
             }
         }
 
-        private static void exibirMenuHospede(Scanner scanner) {
+        private static void exibirMenuHospede(Scanner scan) {
             int opcao;
 
             do {
@@ -452,56 +498,66 @@ public class Main {
             }
         }
 
-        private static void editarDadosHospede(Scanner scan) {
-            System.out.print("Digite o login do hóspede: ");
-            String login = scan.next();
+    private static void editarDadosHospede(Scanner scan) {
+        System.out.print("Digite o login do hóspede: ");
+        String login = scan.next();
 
-            try {
-                Usuario hospede = obterUsuarioPeloLogin(login);
+        try {
+            Usuario hospede = obterUsuarioPeloLogin(login);
 
-                if (hospede.getTipoUsuario() == TipoUsuario.HOSPEDE) {
-                    System.out.println("=== Editar Dados do Hóspede ===");
-                    System.out.println("1. Editar nome");
-                    System.out.println("2. Editar login");
-                    System.out.println("3. Editar senha");
-                    System.out.println("4. Voltar");
+            if (hospede.getTipoUsuario() == TipoUsuario.HOSPEDE) {
+                System.out.println("=== Editar Dados do Hóspede ===");
+                System.out.println("1. Editar nome");
+                System.out.println("2. Editar login");
+                System.out.println("3. Editar senha");
+                System.out.println("4. Editar telefone");
+                System.out.println("5. Voltar");
 
-                    System.out.print("Selecione uma opção: ");
-                    int opcao = scan.nextInt();
+                System.out.print("Selecione uma opção: ");
+                int opcao = scan.nextInt();
 
-                    switch (opcao) {
-                        case 1:
-                            System.out.print("Digite o novo nome: ");
-                            String novoNome = scan.next();
-                            hospede.setNome(novoNome);
-                            System.out.println("Nome editado com sucesso.");
-                            break;
-                        case 2:
-                            System.out.print("Digite o novo login: ");
-                            String novoLogin = scan.next();
-                            hospede.setLogin(novoLogin);
-                            System.out.println("Login editado com sucesso.");
-                            break;
-                        case 3:
-                            System.out.print("Digite a nova senha: ");
-                            String novaSenha = scan.next();
-                            hospede.setSenha(novaSenha);
-                            System.out.println("Senha editada com sucesso.");
-                            break;
-                        case 4:
-                            System.out.println("Voltando ao menu do Hóspede...");
-                            break;
-                        default:
-                            System.out.println("Opção inválida");
-                            break;
-                    }
-                } else {
-                    System.out.println("Login não corresponde a um hóspede.");
+                switch (opcao) {
+                    case 1:
+                        System.out.print("Digite o novo nome: ");
+                        String novoNome = scan.next();
+                        hospede.setNome(novoNome);
+                        System.out.println("Nome editado com sucesso.");
+                        break;
+                    case 2:
+                        System.out.print("Digite o novo login: ");
+                        String novoLogin = scan.next();
+                        hospede.setLogin(novoLogin);
+                        System.out.println("Login editado com sucesso.");
+                        break;
+                    case 3:
+                        System.out.print("Digite a nova senha: ");
+                        String novaSenha = scan.next();
+                        hospede.setSenha(novaSenha);
+                        System.out.println("Senha editada com sucesso.");
+                        break;
+                    case 4:
+                        System.out.print("Digite o novo ddd: ");
+                        String novoDDD = scan.next();
+                        System.out.print("Digite o novo número: ");
+                        String novoNumero = scan.next();
+                        hospede.getTelefone().setDdd(novoDDD);
+                        hospede.getTelefone().setNumero(novoNumero);
+                        System.out.println("Telefone editado com sucesso.");
+                        break;
+                    case 5:
+                        System.out.println("Voltando ao menu do Hóspede...");
+                        break;
+                    default:
+                        System.out.println("Opção inválida");
+                        break;
                 }
-            } catch (AutenticacaoException e) {
-                System.out.println("Falha ao editar os dados do hóspede: " + e.getMessage());
+            } else {
+                System.out.println("Login não corresponde a um hóspede.");
             }
+        } catch (AutenticacaoException e) {
+            System.out.println("Falha ao editar os dados do hóspede: " + e.getMessage());
         }
+    }
 
     private static void realizarReserva(Scanner scan) {
         System.out.print("Digite o login do hóspede: ");
@@ -580,24 +636,6 @@ public class Main {
 
         return reservasHospede;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

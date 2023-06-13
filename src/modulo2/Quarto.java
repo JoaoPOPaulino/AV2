@@ -45,4 +45,14 @@ public class Quarto {
     public void setReservado(boolean reservado) {
         this.reservado = reservado;
     }
+
+    @Override
+    public String toString() {
+        return "Quarto{" +
+                "numero=" + numero +
+                ", tipo=" + tipo +
+                ", diaria=" + diaria +
+                ", reservado=" + reservado +
+                '}';
+    }
 }
